@@ -1,0 +1,342 @@
+$content-width: 35em;
+$mobile-width: 26.5em;
+$gap: 1em;
+$radius: 1em;
+
+$light-theme: (
+  text: #203c64, page: #f0f6ff, glow: #dcecff,
+  surface: #fbfdff, card: #fff, border: #bfd3ed,
+  muted: #4d688c, primary: #2563b8, primary-hover: #1d4e94,
+  hover: #e8f2ff, hover-border: #739ed5, focus: #1762ce
+);
+
+$dark-theme: (
+  text: #e3edff, page: #101b2d, glow: #1b3254,
+  surface: #1d2c44, card: #22344e, border: #425c7c,
+  muted: #b1c5e0, primary: #2866bd, primary-hover: #3275ce,
+  hover: #2c4363, hover-border: #7ca9e6, focus: #9bc7ff
+);
+
+@mixin theme($colors) {
+  @each $name, $value in $colors {
+    --#{$name}: #{$value};
+  }
+}
+
+@mixin mobile {
+  @media (max-width: $mobile-width) {
+    @content;
+  }
+}
+
+@mixin focus-ring {
+  outline: medium solid var(--focus);
+  outline-offset: 0.5em;
+}
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin primary-button {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: #fff;
+
+  @media (hover: hover) {
+    &:hover {
+      background: var(--primary-hover);
+    }
+  }
+}
+
+:root {
+  @include theme($light-theme);
+  font-family: Arial, Helvetica, sans-serif;
+  color: var(--text);
+  background: var(--page);
+  font-synthesis: none;
+  color-scheme: light;
+
+  &[data-theme="dark"] {
+    @include theme($dark-theme);
+    color-scheme: dark;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-width: 17.5em;
+  min-height: 100vh;
+  min-height: 100dvh;
+  margin: 0;
+  padding: 2em 1.5em 1em;
+  background: radial-gradient(ellipse at top, var(--glow), transparent 65%);
+
+  @include mobile {
+    padding: 1.5em 1em 1em;
+  }
+}
+
+button {
+  min-height: 3em;
+  padding: 1em 1.5em;
+  border: thin solid var(--border);
+  border-radius: $radius;
+  background: var(--surface);
+  color: inherit;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 160ms ease, border-color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+
+  &:active {
+    transform: none;
+  }
+
+  @media (hover: hover) {
+    &:hover {
+      border-color: var(--hover-border);
+      background: var(--hover);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+header {
+  display: flex;
+  justify-content: center;
+  gap: $gap;
+  width: min(100%, $content-width);
+  margin: 0 auto 2.5em;
+
+  button:first-child {
+    @include primary-button;
+  }
+
+  @include mobile {
+    gap: 0.5em;
+    margin-bottom: 2em;
+
+    button {
+      flex: 1;
+      padding: 0.5em 0.5em;
+      font-size: 1em;
+    }
+  }
+}
+
+main {
+  width: min(100%, $content-width);
+  margin-inline: auto;
+}
+
+h1 {
+  margin: 0 0 1.5em;
+  font-size: clamp(2em, 6vw, 3em);
+  line-height: 1.15;
+  letter-spacing: normal;
+  text-align: center;
+}
+
+.counters {
+  display: flex;
+  gap: $gap;
+  margin-bottom: 1.5em;
+
+  p {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    min-width: 0;
+    margin: 0;
+    border: thin solid var(--text);
+    border-radius: $radius;
+    overflow: hidden;
+    text-align: center;
+    font-size: 1em;
+  }
+
+  .counter-label,
+  .counter-value {
+    padding: 1em 0.5em;
+    align-content: center;
+  }
+
+  .counter-label {
+    background: var(--text);
+    color: var(--surface);
+    font-weight: 600;
+  }
+
+  .counter-value {
+    background: var(--surface);
+    font-size: 1.5em;
+    padding: 0.5em 0;
+    white-space: nowrap;
+    color: var(--text);
+    font-weight: 750;
+    font-variant-numeric: tabular-nums;
+  }
+
+  @include mobile {
+    gap: 0.5em;
+  }
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: $gap;
+
+  @include mobile {
+    gap: 0.5em;
+  }
+}
+
+.card {
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  min-height: 0;
+  aspect-ratio: 1;
+  padding: 0;
+  border-color: var(--border);
+  border-radius: 0.5em;
+  background: var(--card);
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", sans-serif;
+  font-size: clamp(2em, 7vw, 3em);
+  line-height: 1;
+
+  &:active {
+    transform: none;
+  }
+}
+
+[role="status"] {
+  min-height: 1.5em;
+  margin: 1.5em 0 0;
+  color: var(--muted);
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+dialog {
+  width: min(26.5em, calc(100% - 2em));
+  max-height: calc(100dvh - 3em);
+  padding: 2em;
+  border: thin solid var(--border);
+  border-radius: 1.5em;
+  background: var(--surface);
+  color: inherit;
+  box-shadow: 0 1.5em 5em #15345c33;
+
+  &::backdrop {
+    background: #142b4c66;
+    backdrop-filter: blur(0.5em);
+  }
+
+  h2 {
+    margin: 0 0 1em;
+    font-size: 1.5em;
+    letter-spacing: normal;
+  }
+
+  p {
+    margin: 0 0 2em;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  button {
+    @include primary-button;
+    width: 100%;
+  }
+}
+
+.theme-panel {
+  margin: auto auto 0;
+  padding-top: 1.5em;
+
+  button {
+    padding: 1em 1em;
+    font-size: 1em;
+    white-space: nowrap;
+  }
+}
+
+.leaderboard-table {
+  width: 100%;
+  margin-bottom: 1.5em;
+  border-collapse: collapse;
+
+  th,
+  td {
+    padding: 1em 0;
+    border-bottom: thin solid var(--border);
+    text-align: left;
+    font-weight: normal;
+  }
+
+  td {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5em;
+  flex-wrap: wrap;
+  width: min(100%, $content-width);
+  margin: 1.5em auto 0;
+  padding-top: 1.5em;
+  border-top: thin solid var(--border);
+
+  &-telegram,
+  &-rsschool,
+  &-github {
+    @include flex-center;
+  }
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 3em;
+    min-width: 3em;
+    color: var(--text);
+    text-underline-offset: 0.5em;
+
+    &:focus-visible {
+      @include focus-ring;
+    }
+  }
+}
+
+.school-link {
+  padding: 0.5em;
+  border-radius: 0.5em;
+  background: transparent;
+
+  img {
+    display: block;
+    height: auto;
+  }
+}

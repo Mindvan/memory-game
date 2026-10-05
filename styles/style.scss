@@ -17,6 +17,7 @@ $dark-theme: (
   hover: #2c4363, hover-border: #7ca9e6, focus: #9bc7ff
 );
 
+// CSS-переменные позволяют переключать тему без повторной сборки SCSS.
 @mixin theme($colors) {
   @each $name, $value in $colors {
     --#{$name}: #{$value};
@@ -340,3 +341,4 @@ dialog {
     height: auto;
   }
 }
+

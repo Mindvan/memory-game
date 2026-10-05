@@ -16,7 +16,7 @@ function createGame(parent) {
   const pairsValue = createElement('span', undefined, pairsText);
   pairsValue.className = 'counter-value';
   const pairsCounter = createElement('span', '0', pairsValue);
-  pairsValue.append(`/${gameData.emojis.length}`);
+  pairsValue.append(` из ${gameData.emojis.length}`);
 
   const timeText = createElement('p', undefined, counters);
   timeText.className = 'game-time';
@@ -47,17 +47,21 @@ function createGame(parent) {
   victory.setAttribute('aria-labelledby', 'victory-title');
   createElement('h2', 'еее победа', victory).id = 'victory-title';
   const victoryText = createElement('p', '', victory);
+  const victoryNewGame = createButton('Новая игра', victory);
+  victoryNewGame.addEventListener('click', startGame);
   const victoryClose = createButton('Закрыть', victory);
   victoryClose.addEventListener('click', () => victory.close());
 
   function createShuffledCards() {
-    const images = [...gameData.emojis, ...gameData.emojis];
+    // временно
+    const images = gameData.emojis.flatMap((image) => [image, image]);
 
-    // Перемешивание Фишера — Йетса: каждый раз создаётся новая раскладка.
+    /* временно чтобы проще тестить
     for (let index = images.length - 1; index > 0; index--) {
       const randomIndex = Math.floor(Math.random() * (index + 1));
       [images[index], images[randomIndex]] = [images[randomIndex], images[index]];
     }
+    */
 
     return images.map((image) => ({ image, isOpen: false, isMatched: false }));
   }

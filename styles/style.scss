@@ -195,6 +195,9 @@ h1 {
 
   @include mobile {
     gap: 0.5em;
+    p {
+      grid-template-columns: minmax(0, 1fr);
+    }
   }
 }
 
@@ -293,7 +296,6 @@ dialog {
   }
 
   td {
-    text-align: right;
     font-variant-numeric: tabular-nums;
   }
 }
@@ -341,3 +343,16 @@ dialog {
   }
 }
 
+dialog button + button {
+  margin-top: 0.5em;
+}
+
+html.modal-open,
+html.modal-open body {
+  overflow: hidden;
+}
+
+dialog {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}

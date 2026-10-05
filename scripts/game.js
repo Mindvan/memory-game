@@ -1,4 +1,4 @@
-function createGame(parent) {
+function createGame(parent, resultsStore) {
   const main = createElement('main', undefined, parent);
   createElement('h1', 'Memory Game', main);
 
@@ -43,25 +43,19 @@ function createGame(parent) {
     timeCounter.textContent = `${minutes}:${String(seconds % 60).padStart(2, '0')}`;
   }
 
-  const victory = createElement('dialog', undefined, parent);
-  victory.setAttribute('aria-labelledby', 'victory-title');
-  createElement('h2', 'еее победа', victory).id = 'victory-title';
-  const victoryText = createElement('p', '', victory);
-  const victoryNewGame = createButton('Новая игра', victory);
+  const victory = createModal(parent, 'еее победа', 'victory-title');
+  const victoryText = createElement('p', '', victory.content);
+  const victoryNewGame = createButton('Новая игра');
+  victory.actions.prepend(victoryNewGame);
   victoryNewGame.addEventListener('click', startGame);
-  const victoryClose = createButton('Закрыть', victory);
-  victoryClose.addEventListener('click', () => victory.close());
 
   function createShuffledCards() {
-    // временно
     const images = gameData.emojis.flatMap((image) => [image, image]);
 
-    /* временно чтобы проще тестить
     for (let index = images.length - 1; index > 0; index--) {
       const randomIndex = Math.floor(Math.random() * (index + 1));
       [images[index], images[randomIndex]] = [images[randomIndex], images[index]];
     }
-    */
 
     return images.map((image) => ({ image, isOpen: false, isMatched: false }));
   }
@@ -115,7 +109,10 @@ function createGame(parent) {
         victoryText.textContent = `Найдены все ${pairs} пар за ${moves} ходов. Время: ${timeCounter.textContent}.`;
         console.log('pairs', pairs, 'moves', moves, 'time', timeCounter.textContent);
         message.textContent = 'Игра завершена';
-        victory.showModal();
+        if (!resultsStore.add(moves)) {
+          victoryText.textContent += ' Хранилище недоступно: рейтинг сохранён только до перезагрузки страницы.';
+        }
+        victory.open();
       }
       return;
     }
@@ -140,7 +137,7 @@ function createGame(parent) {
     moves = 0;
     pairs = 0;
     finished = false;
-    if (victory.open) victory.close();
+    victory.close();
     cards = createShuffledCards();
     renderBoard();
     movesCounter.textContent = '0';
@@ -153,3 +150,4 @@ function createGame(parent) {
 
   return { startGame };
 }
+

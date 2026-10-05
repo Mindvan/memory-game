@@ -166,6 +166,9 @@ h1 {
   .counters {
     gap: 0.5em;
   }
+  .counters p {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 .board {
@@ -270,7 +273,6 @@ dialog button {
   font-weight: normal;
 }
 .leaderboard-table td {
-  text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
@@ -312,5 +314,19 @@ dialog button {
 .school-link img {
   display: block;
   height: auto;
+}
+
+dialog button + button {
+  margin-top: 0.5em;
+}
+
+html.modal-open,
+html.modal-open body {
+  overflow: hidden;
+}
+
+dialog {
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 /*# sourceMappingURL=style.css.map */

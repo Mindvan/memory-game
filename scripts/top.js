@@ -1,24 +1,34 @@
-function createLeaderboard(parent) {
-  const leaderboard = createElement('dialog', undefined, parent);
-  leaderboard.setAttribute('aria-labelledby', 'leaderboard-title');
-  const leaderboardTitle = createElement('h2', 'Таблица лидеров', leaderboard);
-  leaderboardTitle.id = 'leaderboard-title';
-  const resultsTable = createElement('table', undefined, leaderboard);
-  resultsTable.className = 'leaderboard-table';
-  const resultsBody = createElement('tbody', undefined, resultsTable);
-  for (const [name, score] of gameData.results) {
-    const row = createElement('tr', undefined, resultsBody);
-    const player = createElement('th', name, row);
-    player.scope = 'row';
-    createElement('td', `${score} баллов`, row);
+function createLeaderboard(parent, resultsStore) {
+  const modal = createModal(parent, 'Таблица лидеров', 'leaderboard-title');
+  function renderResults() {
+    modal.content.replaceChildren();
+    const results = resultsStore.getResults();
+    if (results.length === 0) {
+      createElement('p', 'Пока нет результатов', modal.content);
+      return;
+    }
+    const table = createElement('table', undefined, modal.content);
+    table.className = 'leaderboard-table';
+    const head = createElement('thead', undefined, table);
+    const headings = createElement('tr', undefined, head);
+    for (const title of ['Место', 'Ходы', 'Дата']) {
+      createElement('th', title, headings).scope = 'col';
+    }
+    const body = createElement('tbody', undefined, table);
+    results.forEach((result, index) => {
+      const row = createElement('tr', undefined, body);
+      const date = new Date(result.timestamp);
+      const formattedDate = [String(date.getDate()).padStart(2, '0'),
+        String(date.getMonth() + 1).padStart(2, '0'), date.getFullYear()].join('.');
+      for (const value of [index + 1, result.moves, formattedDate]) {
+        createElement('td', String(value), row);
+      }
+    });
   }
-  const closeButton = createButton('Закрыть', leaderboard);
-
-
-
-  closeButton.addEventListener('click', () => {
-    leaderboard.close();
-  });
-
-  return { open: () => leaderboard.showModal() };
+  return {
+    open() {
+      renderResults();
+      modal.open();
+    },
+  };
 }
